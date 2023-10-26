@@ -125,7 +125,7 @@ const cart = {
  * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl
  */
 function formatPrice(price) {
-  return price.toString();
+  return price.toString()
 }
 
 /**
@@ -136,7 +136,7 @@ function formatPrice(price) {
  * @returns `true` ef `num` er heiltala á bilinu `[min, max]`, annars `false`.
  */
 function validateInteger(num, min = 0, max = Infinity) {
-  return min <= num && num <= max;
+  return min <= num && num <= max
 }
 
 /**
@@ -153,7 +153,7 @@ function validateInteger(num, min = 0, max = Infinity) {
 function formatProduct(product, quantity = undefined) {
   if (quantity && quantity > 1){
     const total = formatPrice(quantity * product.price);
-    return `${product.title} - ${quantity}x${product.price} samtals ${total}`;
+    return `${product.title} - ${quantity}x${product.price} samtals ${total}`
   }
   else {
     return `${product.title} - ${product.price}`;
@@ -201,20 +201,20 @@ function addProduct() {
   // https://en.wikipedia.org/wiki/Structured_programming#Early_exit
   const title = prompt('Titill:');
   if (!title) {
-    console.error('Titill má ekki vera tómur.');
+    console.error('Titill má ekki vera tómur.')
     return;
   }
 
   const description = prompt('Lýsing:');
   if (!description) {
-    console.error('Lýsing má ekki vera tóm.');
+    console.error('Lýsing má ekki vera tóm.')
     return;
   }
 
   // Gerum greinarmun á verði sem streng...
   const priceAsString = prompt('Verð:');
   if (!priceAsString) {
-    console.error('Verð má ekki vera tómt.');
+    console.error('Verð má ekki vera tómt.')
     return;
   }
 
@@ -225,13 +225,13 @@ function addProduct() {
 
   // Athugum hvort við fáum löglega heiltölu sem er stærri en 0 með því að nota hjálparfallið okkar.
   if (!validateInteger(price, 1)) {
-    console.error('Verð verður að vera jákvæð heiltala.');
+    console.error('Verð verður að vera jákvæð heiltala.')
     return;
   }
 
   // Búum til auðkenni fyrir vöruna okkar sem einfaldlega næstu heiltölu út frá fjölda vara sem við
   // höfum nú þegar.
-  const id = products.length + 1;
+  const id = products.length + 1
 
   // Búum til vöruna okkar sem hlut með því að nota „object literal“.
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer
@@ -247,10 +247,10 @@ function addProduct() {
   };
 
   // Bætum vörunni aftast við fylkið okkar.
-  products.push(product);
+  products.push(product)
 
   // Birtum upplýsingar um vöru sem við bjuggum til.
-  console.info(`Vöru bætt við:\n${formatProduct(product)}`);
+  console.info(`Vöru bætt við:\n${formatProduct(product)}`)
 
   // Hér er ekkert return, þá skilar fallið `undefined`.
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/return
@@ -265,8 +265,7 @@ function addProduct() {
  * @returns undefined
  */
 function showProducts() {
-  /* Útfæra */
-  /* Hér ætti að nota `formatPrice` hjálparfall */
+  return `#${id+1} ${title} - ${description} - format.price(${price}) kr.`
 }
 
 /**
@@ -285,11 +284,30 @@ function showProducts() {
  * @returns undefined
  */
 function addProductToCart() {
-  /* Útfæra */
+  const productIdAsString = promt('Auðkenni vöru sem á að bæti við körfu:')
 
-  /* Hér ætti að nota `validateInteger` hjálparfall til að staðfesta gögn frá notanda */
-  
-  /* Til að athuga hvort vara sé til í `cart` þarf að nota `cart.lines.find` */
+  if (!productIdAsString){
+    console.error('Verður að vera tala!')
+    return
+  }
+
+  const product = products.find((i) => i.product.id === productId);
+  const productId = Number.parseInt(productIdAsString);
+
+  if(!product){
+    console.error('vara finnst ekki')
+    return
+  }
+
+  let productInCart = cart.lines.find((i) => i.product.id === productId);
+
+  if(productInCart){
+    productInCart.quantity +=1;
+  }
+  else{
+    const newLine = {product, quantity: 1}
+    cart.lines.push(newLine)
+  }
 }
 
 /**
@@ -305,7 +323,14 @@ function addProductToCart() {
  * @returns undefined
  */
 function showCart() {
-  /* Útfæra */
+   
+   if (!cart){
+    return "Karfan er tóm"
+   }
+   else {
+    return productInCart
+   }
+  
 }
 
 /**
@@ -327,7 +352,34 @@ function showCart() {
  * @returns undefined
  */
 function checkout() {
-  /* Útfæra */
+
+ if (cart.lines.length === 0) {
+  console.log('Karfan er tóm.');
+  return;
 }
 
-tralalallaa
+const name = prompt('Sláðu inn nafn:');
+const address = prompt('Sláðu inn heimilisfang:');
+
+if (!name || !address) {
+  console.log('Villa: Nafn eða heimilisfang má ekki vera tómt.');
+  return;
+}
+
+let totalPrice = 0;
+
+console.log(Pöntun móttekin ${name}.);
+console.log(Vörur verða sendar á ${address}.\n);
+
+cart.lines.forEach(line => {
+  const { product, quantity } = line;
+  const linePrice = product.price * quantity;
+
+  totalPrice += linePrice;
+
+  const productInfo = formatProduct(product, quantity);
+  console.log(productInfo);
+});
+
+console.log(Samtals: ${formatPrice(totalPrice)});
+}
